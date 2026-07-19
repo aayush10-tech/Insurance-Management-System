@@ -1,16 +1,23 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
+
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Default Route
 app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        message: "Insurance Management API is running 🚀"
-    });
+  res.json({
+    success: true,
+    message: "Insurance Management API is running 🚀",
+  });
 });
 
-module.exports = app;
+// Auth Routes
+app.use("/api/auth", authRoutes);
+
+export default app;
