@@ -30,3 +30,11 @@ export const updateCustomerService = async (id, customerData) => {
     data: customerData,
   });
 };
+
+export const deleteCustomerService = async (id) => {
+  return await prisma.customer.delete({
+    where: {
+      id,
+    },
+  });
+};

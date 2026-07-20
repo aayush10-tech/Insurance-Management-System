@@ -7,6 +7,7 @@ import {
   getAllCustomers,
   getCustomerById,
   updateCustomer,
+  deleteCustomer,
 } from "../controllers/customer.controller.js";
 
 const router = express.Router();
@@ -21,5 +22,7 @@ router.get("/", authMiddleware, getAllCustomers);
 router.get("/:id", authMiddleware, getCustomerById);
 
 router.put("/:id", authMiddleware, updateCustomer);
+
+router.delete("/:id", authMiddleware, deleteCustomer);
 
 export default router;

@@ -3,6 +3,7 @@ import {
   getAllCustomersService,
   getCustomerByIdService,
   updateCustomerService,
+  deleteCustomerService,
 } from "../services/customer.service.js";
 
 import ApiResponse from "../utils/apiResponse.js";
@@ -88,6 +89,31 @@ export const updateCustomer = async (req, res) => {
       new ApiResponse(200, "Customer updated successfully", {
         customer: updatedCustomer,
       })
+    );
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json(
+      new ApiResponse(500, "Internal Server Error")
+    );
+  }
+};
+export const deleteCustomer = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    const existingCustomer = await getCustomerByIdService(id);
+
+    if (!existingCustomer) {
+      return res.status(404).json(
+        new ApiResponse(404, "Customer not found")
+      );
+    }
+
+    await deleteCustomerService(id);
+
+    return res.status(200).json(
+      new ApiResponse(200, "Customer deleted successfully")
     );
   } catch (error) {
     console.error(error);
