@@ -6,6 +6,7 @@ import {
   createCustomer,
   getAllCustomers,
   getCustomerById,
+  updateCustomer,
 } from "../controllers/customer.controller.js";
 
 const router = express.Router();
@@ -18,5 +19,7 @@ router.get("/", authMiddleware, getAllCustomers);
 
 //Get Customers by ID
 router.get("/:id", authMiddleware, getCustomerById);
+
+router.put("/:id", authMiddleware, updateCustomer);
 
 export default router;

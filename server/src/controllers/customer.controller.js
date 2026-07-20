@@ -2,6 +2,7 @@ import {
   createCustomerService,
   getAllCustomersService,
   getCustomerByIdService,
+  updateCustomerService,
 } from "../services/customer.service.js";
 
 import ApiResponse from "../utils/apiResponse.js";
@@ -67,5 +68,32 @@ export const getCustomerById = async (req, res) => {
     return res
       .status(500)
       .json(new ApiResponse(500, "Internal Server Error"));
+  }
+};
+export const updateCustomer = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    const existingCustomer = await getCustomerByIdService(id);
+
+    if (!existingCustomer) {
+      return res.status(404).json(
+        new ApiResponse(404, "Customer not found")
+      );
+    }
+
+    const updatedCustomer = await updateCustomerService(id, req.body);
+
+    return res.status(200).json(
+      new ApiResponse(200, "Customer updated successfully", {
+        customer: updatedCustomer,
+      })
+    );
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json(
+      new ApiResponse(500, "Internal Server Error")
+    );
   }
 };

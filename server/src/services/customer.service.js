@@ -21,3 +21,12 @@ export const getCustomerByIdService = async (id) => {
     },
   });
 };
+
+export const updateCustomerService = async (id, customerData) => {
+  return await prisma.customer.update({
+    where: {
+      id,
+    },
+    data: customerData,
+  });
+};
