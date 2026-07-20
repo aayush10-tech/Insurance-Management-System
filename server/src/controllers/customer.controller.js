@@ -7,119 +7,69 @@ import {
 } from "../services/customer.service.js";
 
 import ApiResponse from "../utils/apiResponse.js";
-
+import ApiError from "../utils/apiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { findCustomerOrThrow } from "../helpers/customer.helper.js";
 // Create Customer
-export const createCustomer = async (req, res) => {
-  try {
-    const customer = await createCustomerService(req.body);
+export const createCustomer = asyncHandler(async (req, res) => {
+  const customer = await createCustomerService(req.body);
 
-    return res.status(201).json(
-      new ApiResponse(201, "Customer created successfully", {
-        customer,
-      })
-    );
-  } catch (error) {
-    console.error(error);
-
-    return res
-      .status(500)
-      .json(new ApiResponse(500, "Internal Server Error"));
-  }
-};
+  return res.status(201).json(
+    new ApiResponse(201, "Customer created successfully", {
+      customer,
+    })
+  );
+});
 
 // Get All Customers
-export const getAllCustomers = async (req, res) => {
-  try {
-    const customers = await getAllCustomersService();
+export const getAllCustomers = asyncHandler(async (req, res) => {
+  const customers = await getAllCustomersService();
 
-    return res.status(200).json(
-      new ApiResponse(200, "Customers fetched successfully", {
-        count: customers.length,
-        customers,
-      })
-    );
-  } catch (error) {
-    console.error(error);
+  return res.status(200).json(
+    new ApiResponse(200, "Customers fetched successfully", {
+      count: customers.length,
+      customers,
+    })
+  );
+});
 
-    return res
-      .status(500)
-      .json(new ApiResponse(500, "Internal Server Error"));
-  }
-};
-export const getCustomerById = async (req, res) => {
-  try {
-    const id = Number(req.params.id);
+// Get Customer By ID
+export const getCustomerById = asyncHandler(async (req, res) => {
+  const id = Number(req.params.id);
 
-    const customer = await getCustomerByIdService(id);
+  const customer = await findCustomerOrThrow(id);
 
-    if (!customer) {
-      return res.status(404).json(
-        new ApiResponse(404, "Customer not found")
-      );
-    }
+  return res.status(200).json(
+    new ApiResponse(200, "Customer fetched successfully", {
+      customer,
+    })
+  );
+});
 
-    return res.status(200).json(
-      new ApiResponse(200, "Customer fetched successfully", {
-        customer,
-      })
-    );
-  } catch (error) {
-    console.error(error);
+// Update Customer
+export const updateCustomer = asyncHandler(async (req, res) => {
+  const id = Number(req.params.id);
 
-    return res
-      .status(500)
-      .json(new ApiResponse(500, "Internal Server Error"));
-  }
-};
-export const updateCustomer = async (req, res) => {
-  try {
-    const id = Number(req.params.id);
+  await findCustomerOrThrow(id);
 
-    const existingCustomer = await getCustomerByIdService(id);
+  const updatedCustomer = await updateCustomerService(id, req.body);
 
-    if (!existingCustomer) {
-      return res.status(404).json(
-        new ApiResponse(404, "Customer not found")
-      );
-    }
+  return res.status(200).json(
+    new ApiResponse(200, "Customer updated successfully", {
+      customer: updatedCustomer,
+    })
+  );
+});
 
-    const updatedCustomer = await updateCustomerService(id, req.body);
+// Delete Customer
+export const deleteCustomer = asyncHandler(async (req, res) => {
+  const id = Number(req.params.id);
 
-    return res.status(200).json(
-      new ApiResponse(200, "Customer updated successfully", {
-        customer: updatedCustomer,
-      })
-    );
-  } catch (error) {
-    console.error(error);
+  await findCustomerOrThrow(id);
 
-    return res.status(500).json(
-      new ApiResponse(500, "Internal Server Error")
-    );
-  }
-};
-export const deleteCustomer = async (req, res) => {
-  try {
-    const id = Number(req.params.id);
+  await deleteCustomerService(id);
 
-    const existingCustomer = await getCustomerByIdService(id);
-
-    if (!existingCustomer) {
-      return res.status(404).json(
-        new ApiResponse(404, "Customer not found")
-      );
-    }
-
-    await deleteCustomerService(id);
-
-    return res.status(200).json(
-      new ApiResponse(200, "Customer deleted successfully")
-    );
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json(
-      new ApiResponse(500, "Internal Server Error")
-    );
-  }
-};
+  return res.status(200).json(
+    new ApiResponse(200, "Customer deleted successfully")
+  );
+});
