@@ -1,9 +1,23 @@
 import prisma from "../config/prisma.js";
 
 export const createCustomerService = async (customerData) => {
-  const customer = await prisma.customer.create({
+  return await prisma.customer.create({
     data: customerData,
   });
+};
 
-  return customer;
+export const getAllCustomersService = async () => {
+  return await prisma.customer.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+export const getCustomerByIdService = async (id) => {
+  return await prisma.customer.findUnique({
+    where: {
+      id,
+    },
+  });
 };
