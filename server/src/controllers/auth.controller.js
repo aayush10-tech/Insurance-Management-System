@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import ApiResponse from "../utils/apiResponse.js";
 
 // ================= REGISTER =================
 export const register = async (req, res) => {
@@ -8,10 +9,9 @@ export const register = async (req, res) => {
     const { fullName, email, password } = req.body;
 
     if (!fullName || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
+      return res
+        .status(400)
+        .json(new ApiResponse(400, "All fields are required"));
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -19,10 +19,9 @@ export const register = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "Email already exists",
-      });
+      return res
+        .status(400)
+        .json(new ApiResponse(400, "Email already exists"));
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -37,68 +36,48 @@ export const register = async (req, res) => {
 
     const { password: _, ...userWithoutPassword } = user;
 
-    return res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      user: userWithoutPassword,
-    });
+    return res.status(201).json(
+      new ApiResponse(201, "User registered successfully", {
+        user: userWithoutPassword,
+      })
+    );
   } catch (error) {
-    console.error("REGISTER ERROR:", error);
+    console.error(error);
 
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+    return res
+      .status(500)
+      .json(new ApiResponse(500, "Internal Server Error"));
   }
 };
 
 // ================= LOGIN =================
 export const login = async (req, res) => {
   try {
-    console.log("========== LOGIN REQUEST ==========");
-    console.log("Request Body:", req.body);
-
     const { email, password } = req.body;
 
     if (!email || !password) {
-      console.log("Missing email or password");
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
+      return res
+        .status(400)
+        .json(new ApiResponse(400, "Email and password are required"));
     }
-
-    console.log("Finding user...");
 
     const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
-    console.log("User Found:", user);
-
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
+      return res
+        .status(401)
+        .json(new ApiResponse(401, "Invalid email or password"));
     }
-
-    console.log("Comparing password...");
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    console.log("Password Match:", isPasswordValid);
-
     if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
+      return res
+        .status(401)
+        .json(new ApiResponse(401, "Invalid email or password"));
     }
-
-    console.log("JWT Secret:", process.env.JWT_SECRET);
 
     const token = jwt.sign(
       {
@@ -112,23 +91,19 @@ export const login = async (req, res) => {
       }
     );
 
-    console.log("JWT Token Generated Successfully");
-
     const { password: _, ...userWithoutPassword } = user;
 
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token,
-      user: userWithoutPassword,
-    });
+    return res.status(200).json(
+      new ApiResponse(200, "Login successful", {
+        token,
+        user: userWithoutPassword,
+      })
+    );
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
+    console.error(error);
 
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message,
-    });
+    return res
+      .status(500)
+      .json(new ApiResponse(500, "Internal Server Error"));
   }
 };
