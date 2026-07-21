@@ -84,6 +84,7 @@ model Policy {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   premiumPayments PremiumPayment[]
+  claims          Claim[]
 }
 
 model PremiumPayment {
@@ -98,6 +99,30 @@ model PremiumPayment {
   transactionId String? @unique
 
   status String @default("PAID")
+
+  remarks String?
+
+  policyId Int
+  policy   Policy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Claim {
+  id Int @id @default(autoincrement())
+
+  claimNumber String @unique
+
+  claimAmount Decimal @db.Decimal(10, 2)
+
+  claimReason String
+
+  incidentDate DateTime
+
+  description String?
+
+  status String @default("PENDING")
 
   remarks String?
 

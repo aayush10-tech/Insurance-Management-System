@@ -10,6 +10,8 @@ import swaggerSpec from "./docs/swagger.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 import policyRoutes from "./routes/policy.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
+import claimRoutes from "./routes/claim.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js"; 
 const app = express();
 
 // Middleware
@@ -31,6 +33,9 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/policies", policyRoutes);
 app.use("/api/payments", paymentRoutes);
 // Swagger Documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/claims", claimRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Global Error Handler
