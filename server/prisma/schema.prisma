@@ -81,6 +81,29 @@ model Policy {
   customerId Int
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  premiumPayments PremiumPayment[]
+}
+
+model PremiumPayment {
+  id Int @id @default(autoincrement())
+
+  amount Decimal @db.Decimal(10, 2)
+
+  paymentDate DateTime @default(now())
+
+  paymentMethod String
+
+  transactionId String? @unique
+
+  status String @default("PAID")
+
+  remarks String?
+
+  policyId Int
+  policy   Policy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

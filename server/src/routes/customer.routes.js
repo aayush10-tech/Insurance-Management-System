@@ -15,9 +15,6 @@ import {
 
 const router = express.Router();
 
-// Create Customer
-router.post("/", authMiddleware, createCustomer);
-
 // Get All Customers
 router.get("/", authMiddleware, getAllCustomers);
 

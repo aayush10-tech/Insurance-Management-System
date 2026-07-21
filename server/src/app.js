@@ -8,7 +8,8 @@ import customerRoutes from "./routes/customer.routes.js";
 
 import swaggerSpec from "./docs/swagger.js";
 import errorMiddleware from "./middleware/error.middleware.js";
-
+import policyRoutes from "./routes/policy.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 const app = express();
 
 // Middleware
@@ -27,7 +28,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/customers", customerRoutes);
-
+app.use("/api/policies", policyRoutes);
+app.use("/api/payments", paymentRoutes);
 // Swagger Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
