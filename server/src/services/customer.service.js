@@ -6,12 +6,83 @@ export const createCustomerService = async (customerData) => {
   });
 };
 
-export const getAllCustomersService = async () => {
-  return await prisma.customer.findMany({
+export const getAllCustomersService = async (
+  page,
+  limit,
+  search = "",
+  sortBy = "createdAt",
+  order = "desc",
+  city = "",
+  state = "",
+  gender = ""
+) => {
+  const skip = (page - 1) * limit;
+
+  const where = {
+    ...(search && {
+      OR: [
+        {
+          firstName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          lastName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          phone: {
+            contains: search,
+          },
+        },
+      ],
+    }),
+
+    ...(city && {
+      city: {
+        equals: city,
+        mode: "insensitive",
+      },
+    }),
+
+    ...(state && {
+      state: {
+        equals: state,
+        mode: "insensitive",
+      },
+    }),
+
+    ...(gender && {
+      gender,
+    }),
+  };
+
+  const customers = await prisma.customer.findMany({
+    where,
+    skip,
+    take: limit,
     orderBy: {
-      createdAt: "desc",
+      [sortBy]: order,
     },
   });
+
+  const totalCustomers = await prisma.customer.count({
+    where,
+  });
+
+  return {
+    customers,
+    totalCustomers,
+  };
 };
 
 export const getCustomerByIdService = async (id) => {

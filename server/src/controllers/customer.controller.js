@@ -1,15 +1,14 @@
 import {
   createCustomerService,
   getAllCustomersService,
-  getCustomerByIdService,
   updateCustomerService,
   deleteCustomerService,
 } from "../services/customer.service.js";
 
 import ApiResponse from "../utils/apiResponse.js";
-import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { findCustomerOrThrow } from "../helpers/customer.helper.js";
+
 // Create Customer
 export const createCustomer = asyncHandler(async (req, res) => {
   const customer = await createCustomerService(req.body);
@@ -23,11 +22,42 @@ export const createCustomer = asyncHandler(async (req, res) => {
 
 // Get All Customers
 export const getAllCustomers = asyncHandler(async (req, res) => {
-  const customers = await getAllCustomersService();
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "createdAt";
+  const order = req.query.order || "desc";
+
+  const city = req.query.city || "";
+  const state = req.query.state || "";
+  const gender = req.query.gender || "";
+
+  const { customers, totalCustomers } = await getAllCustomersService(
+    page,
+    limit,
+    search,
+    sortBy,
+    order,
+    city,
+    state,
+    gender
+  );
+
+  const totalPages = Math.ceil(totalCustomers / limit);
 
   return res.status(200).json(
     new ApiResponse(200, "Customers fetched successfully", {
-      count: customers.length,
+      page,
+      limit,
+      search,
+      sortBy,
+      order,
+      city,
+      state,
+      gender,
+      totalCustomers,
+      totalPages,
       customers,
     })
   );
