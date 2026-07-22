@@ -10,10 +10,51 @@ import {
 
 const router = express.Router();
 
-// Protected Route
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User Management APIs
+ */
+
+/**
+ * @swagger
+ * /users/profile:
+ *   get:
+ *     summary: Get logged-in user's profile
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Returns the profile details of the currently authenticated user.
+ *     responses:
+ *       200:
+ *         description: Profile fetched successfully
+ *       401:
+ *         description: Unauthorized or invalid token
+ *       500:
+ *         description: Internal server error
+ */
 router.get("/profile", authMiddleware, getProfile);
 
-// Admin Only Route
+/**
+ * @swagger
+ * /users/all:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Returns a list of all registered users. Accessible only by ADMIN users.
+ *     responses:
+ *       200:
+ *         description: Users fetched successfully
+ *       401:
+ *         description: Unauthorized or invalid token
+ *       403:
+ *         description: Access denied. Admin only.
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/all",
   authMiddleware,
