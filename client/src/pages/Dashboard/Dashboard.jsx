@@ -1,0 +1,84 @@
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import StatsGrid from "../../components/ui/StatsGrid";
+import RevenueChart from "../../components/ui/RevenueChart";
+
+import useDashboard from "../../hooks/useDashboard";
+import { revenueData } from "../../utils/chartData";
+import ClaimsChart from "../../components/ui/ClaimsChart";
+import RecentCustomers from "../../components/ui/RecentCustomers";
+import RecentClaims from "../../components/ui/RecentClaims";
+const Dashboard = () => {
+  const { dashboard, loading } = useDashboard();
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex justify-center items-center h-96">
+          <h2 className="text-2xl font-semibold text-slate-600">
+            Loading Dashboard...
+          </h2>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const stats = [
+    {
+      title: "Total Customers",
+      value: dashboard?.totalCustomers ?? 0,
+    },
+    {
+      title: "Total Policies",
+      value: dashboard?.totalPolicies ?? 0,
+    },
+    {
+      title: "Total Claims",
+      value: dashboard?.totalClaims ?? 0,
+    },
+    {
+      title: "Total Payments",
+      value: dashboard?.totalPayments ?? 0,
+    },
+  ];
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-8">
+
+        {/* Header */}
+        <div>
+          <h1 className="text-4xl font-bold text-slate-800">
+            Dashboard
+          </h1>
+
+          <p className="text-slate-500 mt-2">
+            Welcome to the Insurance Management System
+          </p>
+        </div>
+
+        {/* KPI Cards */}
+        <StatsGrid stats={stats} />
+
+        {/* Revenue Chart */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+    <div className="xl:col-span-2">
+        <RevenueChart data={revenueData} />
+    </div>
+
+    <div>
+        <ClaimsChart />
+    </div>
+
+</div>
+<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+  <RecentCustomers customers={dashboard?.recentCustomers} />
+  <RecentClaims claims={dashboard?.recentClaims} />
+</div>
+
+      </div>
+    </DashboardLayout>
+  );
+};
+
+export default Dashboard;
