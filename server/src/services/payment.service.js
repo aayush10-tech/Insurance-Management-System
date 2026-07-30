@@ -1,5 +1,5 @@
 import prisma from "../config/prisma.js";
-import ApiError from "../utils/ApiError.js";
+import ApiError from "../utils/apiError.js";
 
 // Helper to safely parse dates
 const parsePaymentDate = (value) => {
