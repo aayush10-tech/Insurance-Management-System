@@ -5,12 +5,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "node src/server.js",
-  "dev": "nodemon src/server.js",
-  "build": "prisma generate",
-  "postinstall": "prisma generate",
-  "render-build": "prisma generate && prisma migrate deploy"
-},
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "build": "prisma generate",
+    "postinstall": "prisma generate",
+    "render-build": "prisma generate && prisma migrate deploy",
+    "seed": "prisma db seed"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
