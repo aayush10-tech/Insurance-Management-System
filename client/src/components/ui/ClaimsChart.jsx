@@ -1,71 +1,85 @@
 import {
-    PieChart,
-    Pie,
-    Cell,
-    ResponsiveContainer,
-    Tooltip,
-    Legend,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
 } from "recharts";
 
 const COLORS = [
-    "#22c55e",
-    "#f59e0b",
-    "#ef4444",
+  "#22c55e", // Approved
+  "#f59e0b", // Pending
+  "#ef4444", // Rejected
+  "#3b82f6", // Others (Future)
 ];
 
-const data = [
-    {
-        name: "Approved",
-        value: 12,
-    },
-    {
-        name: "Pending",
-        value: 5,
-    },
-    {
-        name: "Rejected",
-        value: 2,
-    },
-];
+const ClaimsChart = ({ data = [] }) => {
+  const chartData = data.filter((item) => item.value > 0);
 
-const ClaimsChart = () => {
-    return (
-        <div className="bg-white rounded-2xl border shadow-sm p-6 h-full">
+  const totalClaims = chartData.reduce(
+    (sum, item) => sum + Number(item.value || 0),
+    0
+  );
 
-            <h2 className="text-xl font-semibold text-slate-800 mb-5">
-                Claims Status
-            </h2>
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 h-full">
+      <div className="flex flex-col gap-2 mb-6">
+        <h2 className="text-xl font-semibold text-slate-800">
+          Claims Status
+        </h2>
 
-            <ResponsiveContainer
-                width="100%"
-                height={320}
-            >
-                <PieChart>
+        <p className="text-sm text-slate-500">
+          Current insurance claim distribution
+        </p>
 
-                    <Pie
-                        data={data}
-                        dataKey="value"
-                        nameKey="name"
-                        innerRadius={65}
-                        outerRadius={95}
-                    >
-                        {data.map((entry, index) => (
-                            <Cell
-                                key={index}
-                                fill={COLORS[index]}
-                            />
-                        ))}
-                    </Pie>
+        <div className="mt-2">
+          <p className="text-sm text-slate-500">
+            Total Claims
+          </p>
 
-                    <Tooltip />
-
-                    <Legend />
-
-                </PieChart>
-            </ResponsiveContainer>
-
+          <h3 className="text-3xl font-bold text-emerald-600">
+            {totalClaims}
+          </h3>
         </div>
-    );
+      </div>
+
+      <ResponsiveContainer
+        width="100%"
+        height={320}
+      >
+        <PieChart>
+          <Pie
+            data={chartData}
+            dataKey="value"
+            nameKey="name"
+            innerRadius={65}
+            outerRadius={100}
+            paddingAngle={3}
+            label={({ name, percent }) =>
+              `${name} ${(percent * 100).toFixed(0)}%`
+            }
+          >
+            {chartData.map((entry, index) => (
+              <Cell
+                key={entry.name}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+
+          <Tooltip
+            formatter={(value) => [value, "Claims"]}
+          />
+
+          <Legend />
+            verticalAlign="bottom"
+            height={36}
+          /
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  );
 };
 
 export default ClaimsChart;

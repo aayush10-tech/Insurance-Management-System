@@ -13,10 +13,9 @@ export const getCustomers = async (
     },
   });
 
-  return response.data;
+  // Return only the useful data object
+  return response.data.data;
 };
-
-// Keep the remaining functions unchanged...
 
 export const getCustomerById = async (id) => {
   const response = await axiosInstance.get(`/customers/${id}`);
@@ -36,4 +35,4 @@ export const updateCustomer = async (id, data) => {
 export const deleteCustomer = async (id) => {
   const response = await axiosInstance.delete(`/customers/${id}`);
   return response.data;
-};  
+};

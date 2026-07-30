@@ -11,6 +11,9 @@ import DeleteCustomerModal from "../../components/customers/DeleteCustomerModal"
 import useCustomers from "../../hooks/useCustomers";
 import { getCustomerById } from "../../services/customerService";
 
+import { exportPdf } from "../../utils/exportPdf";
+import { exportExcel } from "../../utils/exportExcel";
+
 const Customers = () => {
   const {
     customers,
@@ -43,7 +46,6 @@ const Customers = () => {
   const handleView = async (id) => {
     try {
       const customer = await getCustomerById(id);
-
       setSelectedCustomer(customer);
       setIsViewOpen(true);
     } catch (error) {
@@ -55,7 +57,6 @@ const Customers = () => {
   const handleEdit = async (id) => {
     try {
       const customer = await getCustomerById(id);
-
       setEditCustomer(customer);
       setIsEditOpen(true);
     } catch (error) {
@@ -69,12 +70,49 @@ const Customers = () => {
     setIsDeleteOpen(true);
   };
 
+  // Export PDF
+  const handleExportPDF = () => {
+    exportPdf({
+      title: "Customers Report",
+      fileName: "customers-report.pdf",
+      columns: [
+        "Name",
+        "Email",
+        "Phone",
+        "Gender",
+        "Status",
+      ],
+      rows: customers.map((customer) => [
+  `${customer.firstName} ${customer.lastName}`,
+  customer.email,
+  customer.phone,
+  customer.gender,
+  customer.status,
+]),
+    });
+  };
+
+  // Export Excel
+  const handleExportExcel = () => {
+    exportExcel({
+      fileName: "customers-report",
+      data: customers,
+      columnMapping: {
+  Name: (customer) => `${customer.firstName} ${customer.lastName}`,
+  Email: "email",
+  Phone: "phone",
+  Gender: "gender",
+  Status: "status",
+},
+    });
+  };
+  console.log(customers);
   return (
     <DashboardLayout>
       <div className="space-y-6">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
 
           <div>
             <h1 className="text-4xl font-bold">
@@ -86,12 +124,30 @@ const Customers = () => {
             </p>
           </div>
 
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl"
-          >
-            + Add Customer
-          </button>
+          <div className="flex flex-wrap gap-3">
+
+            <button
+              onClick={handleExportPDF}
+              className="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl transition"
+            >
+              📄 Export PDF
+            </button>
+
+            <button
+              onClick={handleExportExcel}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl transition"
+            >
+              📊 Export Excel
+            </button>
+
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition"
+            >
+              + Add Customer
+            </button>
+
+          </div>
 
         </div>
 

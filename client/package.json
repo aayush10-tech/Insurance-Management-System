@@ -13,6 +13,10 @@
     "@hookform/resolvers": "^5.5.7",
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.18.1",
+    "file-saver": "^2.0.5",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lucide-react": "^1.27.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.83.0",
@@ -21,6 +25,7 @@
     "react-toastify": "^11.1.0",
     "recharts": "^3.10.1",
     "tailwindcss": "^4.3.3",
+    "xlsx": "^0.18.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {

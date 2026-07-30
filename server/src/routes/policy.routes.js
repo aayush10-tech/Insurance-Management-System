@@ -11,9 +11,12 @@ import {
 import {
   createPolicy,
   getAllPolicies,
+  getExpiringPolicies,
   getPolicyById,
   updatePolicy,
   deletePolicy,
+  cancelPolicy,
+  renewPolicy,
 } from "../controllers/policy.controller.js";
 
 const router = express.Router();
@@ -28,27 +31,44 @@ const router = express.Router();
 /**
  * @swagger
  * /policies:
- *   post:
- *     summary: Create a new policy
+ *   get:
+ *     summary: Get all policies
  *     tags: [Policies]
  *     security:
  *       - bearerAuth: []
- *     description: Create a new insurance policy for a customer.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Policy created successfully
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized
- *       500:
- *         description: Internal server error
+ */
+router.get("/", authMiddleware, getAllPolicies);
+
+/**
+ * @swagger
+ * /policies/expiring:
+ *   get:
+ *     summary: Get policies expiring within the next 30 days
+ *     tags: [Policies]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/expiring", authMiddleware, getExpiringPolicies);
+
+/**
+ * @swagger
+ * /policies/{id}:
+ *   get:
+ *     summary: Get policy by ID
+ *     tags: [Policies]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/:id", authMiddleware, getPolicyById);
+
+/**
+ * @swagger
+ * /policies:
+ *   post:
+ *     summary: Create Policy
+ *     tags: [Policies]
+ *     security:
+ *       - bearerAuth: []
  */
 router.post(
   "/",
@@ -59,84 +79,12 @@ router.post(
 
 /**
  * @swagger
- * /policies:
- *   get:
- *     summary: Get all policies
- *     tags: [Policies]
- *     security:
- *       - bearerAuth: []
- *     description: Retrieve all insurance policies.
- *     responses:
- *       200:
- *         description: Policies fetched successfully
- *       401:
- *         description: Unauthorized
- *       500:
- *         description: Internal server error
- */
-router.get("/", authMiddleware, getAllPolicies);
-
-/**
- * @swagger
- * /policies/{id}:
- *   get:
- *     summary: Get policy by ID
- *     tags: [Policies]
- *     security:
- *       - bearerAuth: []
- *     description: Retrieve a policy by its ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         example: 1
- *     responses:
- *       200:
- *         description: Policy fetched successfully
- *       404:
- *         description: Policy not found
- *       401:
- *         description: Unauthorized
- *       500:
- *         description: Internal server error
- */
-router.get("/:id", authMiddleware, getPolicyById);
-
-/**
- * @swagger
  * /policies/{id}:
  *   put:
- *     summary: Update policy
+ *     summary: Update Policy
  *     tags: [Policies]
  *     security:
  *       - bearerAuth: []
- *     description: Update an existing insurance policy.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         example: 1
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Policy updated successfully
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Policy not found
- *       500:
- *         description: Internal server error
  */
 router.put(
   "/:id",
@@ -147,29 +95,34 @@ router.put(
 
 /**
  * @swagger
- * /policies/{id}:
- *   delete:
- *     summary: Delete policy
+ * /policies/{id}/cancel:
+ *   patch:
+ *     summary: Cancel Policy
  *     tags: [Policies]
  *     security:
  *       - bearerAuth: []
- *     description: Delete a policy by its ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         example: 1
- *     responses:
- *       200:
- *         description: Policy deleted successfully
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Policy not found
- *       500:
- *         description: Internal server error
+ */
+router.patch("/:id/cancel", authMiddleware, cancelPolicy);
+
+/**
+ * @swagger
+ * /policies/{id}/renew:
+ *   patch:
+ *     summary: Renew Policy
+ *     tags: [Policies]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.patch("/:id/renew", authMiddleware, renewPolicy);
+
+/**
+ * @swagger
+ * /policies/{id}:
+ *   delete:
+ *     summary: Delete Policy (Legacy)
+ *     tags: [Policies]
+ *     security:
+ *       - bearerAuth: []
  */
 router.delete("/:id", authMiddleware, deletePolicy);
 

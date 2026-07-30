@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-export const createPolicySchema = z.object({
-  policyNumber: z.string().min(1, "Policy number is required"),
-
+const policySchema = z.object({
   policyName: z
     .string()
     .min(3, "Policy name must be at least 3 characters"),
 
-  policyType: z.string().min(1, "Policy type is required"),
+  policyType: z
+    .string()
+    .min(2, "Policy type is required"),
 
   description: z.string().optional(),
 
@@ -41,7 +41,15 @@ export const createPolicySchema = z.object({
   customerId: z.coerce
     .number()
     .int()
-    .positive("Customer ID is required"),
+    .positive("Customer is required"),
 });
 
-export const updatePolicySchema = createPolicySchema.partial();
+export const createPolicySchema = policySchema.refine(
+  (data) => data.endDate > data.startDate,
+  {
+    message: "End date must be after start date",
+    path: ["endDate"],
+  }
+);
+
+export const updatePolicySchema = policySchema.partial();

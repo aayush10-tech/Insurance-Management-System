@@ -1,12 +1,14 @@
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import StatsGrid from "../../components/ui/StatsGrid";
 import RevenueChart from "../../components/ui/RevenueChart";
-
-import useDashboard from "../../hooks/useDashboard";
-import { revenueData } from "../../utils/chartData";
+import CustomerGrowthChart from "../../components/ui/CustomerGrowthChart";
+import PolicyDistributionChart from "../../components/ui/PolicyDistributionChart";
 import ClaimsChart from "../../components/ui/ClaimsChart";
 import RecentCustomers from "../../components/ui/RecentCustomers";
 import RecentClaims from "../../components/ui/RecentClaims";
+
+import useDashboard from "../../hooks/useDashboard";
+
 const Dashboard = () => {
   const { dashboard, loading } = useDashboard();
 
@@ -32,6 +34,14 @@ const Dashboard = () => {
       value: dashboard?.totalPolicies ?? 0,
     },
     {
+      title: "Active Policies",
+      value: dashboard?.activePolicies ?? 0,
+    },
+    {
+      title: "Expired Policies",
+      value: dashboard?.expiredPolicies ?? 0,
+    },
+    {
       title: "Total Claims",
       value: dashboard?.totalClaims ?? 0,
     },
@@ -39,12 +49,21 @@ const Dashboard = () => {
       title: "Total Payments",
       value: dashboard?.totalPayments ?? 0,
     },
+    {
+      title: "Approved Claims",
+      value: dashboard?.approvedClaims ?? 0,
+    },
+    {
+      title: "Premium Collected",
+      value: `₹${Number(
+        dashboard?.totalPremiumCollected ?? 0
+      ).toLocaleString()}`,
+    },
   ];
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-
         {/* Header */}
         <div>
           <h1 className="text-4xl font-bold text-slate-800">
@@ -59,23 +78,38 @@ const Dashboard = () => {
         {/* KPI Cards */}
         <StatsGrid stats={stats} />
 
-        {/* Revenue Chart */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Revenue & Customer Growth */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <RevenueChart
+            data={dashboard?.monthlyRevenue || []}
+          />
 
-    <div className="xl:col-span-2">
-        <RevenueChart data={revenueData} />
-    </div>
+          <CustomerGrowthChart
+            data={dashboard?.customerGrowth || []}
+          />
+        </div>
 
-    <div>
-        <ClaimsChart />
-    </div>
+        {/* Policy Distribution & Claims */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <PolicyDistributionChart
+            data={dashboard?.policyDistribution || []}
+          />
 
-</div>
-<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-  <RecentCustomers customers={dashboard?.recentCustomers} />
-  <RecentClaims claims={dashboard?.recentClaims} />
-</div>
+          <ClaimsChart
+            data={dashboard?.claimsByStatus || []}
+          />
+        </div>
 
+        {/* Recent Activity */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <RecentCustomers
+            customers={dashboard?.recentCustomers}
+          />
+
+          <RecentClaims
+            claims={dashboard?.recentClaims}
+          />
+        </div>
       </div>
     </DashboardLayout>
   );

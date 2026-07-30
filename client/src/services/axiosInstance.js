@@ -21,4 +21,23 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Handle expired or invalid JWT automatically
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn("Session expired. Redirecting to login...");
+
+      localStorage.removeItem("token");
+
+      // Prevent redirect loop if already on login page
+      if (window.location.pathname !== "/login") {
+        window.location.replace("/login");
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default axiosInstance;

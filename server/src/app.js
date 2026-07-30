@@ -11,7 +11,7 @@ import paymentRoutes from "./routes/payment.routes.js";
 import claimRoutes from "./routes/claim.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import documentRoutes from "./routes/document.routes.js";
-
+import reportRoutes from "./routes/report.routes.js";
 import swaggerSpec from "./docs/swagger.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 
@@ -41,7 +41,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/claims", claimRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/documents", documentRoutes);
-
+app.use("/api/reports", reportRoutes);
 // Swagger Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

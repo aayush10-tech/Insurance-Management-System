@@ -18,18 +18,16 @@ const useCustomers = () => {
     try {
       setLoading(true);
 
-      const response = await getCustomers(
-        currentPage,
-        10,
-        currentSearch
-      );
+      const data = await getCustomers(
+  currentPage,
+  10,
+  currentSearch
+);
 
-      if (response.success) {
-        setCustomers(response.data.customers);
-        setPage(response.data.page);
-        setTotalPages(response.data.totalPages);
-        setTotalCustomers(response.data.totalCustomers);
-      }
+setCustomers(data.customers || []);
+setPage(data.page || 1);
+setTotalPages(data.totalPages || 1);
+setTotalCustomers(data.totalCustomers || 0);
     } catch (error) {
       console.error("Error fetching customers:", error);
     } finally {

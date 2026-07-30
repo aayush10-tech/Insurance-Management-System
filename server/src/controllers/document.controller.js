@@ -51,15 +51,31 @@ export const uploadDocument = async (req, res, next) => {
 // Get All Documents
 export const getAllDocuments = async (req, res, next) => {
   try {
-    const documents = await getAllDocumentsService();
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const search = req.query.search || "";
 
-    const formatted = documents.map((doc) => formatDocument(req, doc));
+    const result = await getAllDocumentsService(
+      page,
+      limit,
+      search
+    );
+
+    const formattedDocuments = result.documents.map((doc) =>
+      formatDocument(req, doc)
+    );
 
     return res.status(200).json(
       new ApiResponse(
         200,
         "Documents fetched successfully",
-        formatted
+        {
+          documents: formattedDocuments,
+          totalDocuments: result.totalDocuments,
+          page: result.page,
+          limit: result.limit,
+          totalPages: result.totalPages,
+        }
       )
     );
   } catch (error) {

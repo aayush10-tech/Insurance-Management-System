@@ -10,7 +10,7 @@ import Documents from "../pages/Documents/Documents";
 import Users from "../pages/Users/Users";
 
 import ProtectedRoute from "./ProtectedRoute";
-
+import Reports from "../pages/Reports";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -79,6 +79,14 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/reports"
+  element={
+    <ProtectedRoute>
+      <Reports />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </BrowserRouter>
   );
