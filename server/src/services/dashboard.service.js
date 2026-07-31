@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 
 export const getDashboardSummaryService = async () => {
+  
   const [
     totalCustomers,
     totalPolicies,
@@ -19,6 +20,8 @@ export const getDashboardSummaryService = async () => {
     customers,
 
     policies,
+
+    policyExpiryPolicies,
   ] = await Promise.all([
     prisma.customer.count(),
 
@@ -97,6 +100,24 @@ export const getDashboardSummaryService = async () => {
         policyType: true,
       },
     }),
+
+    prisma.policy.findMany({
+  where: {
+    status: "ACTIVE",
+  },
+  include: {
+    customer: {
+      select: {
+        firstName: true,
+        lastName: true,
+      },
+    },
+  },
+  orderBy: {
+    endDate: "asc",
+  },
+  take: 5,
+}),
   ]);
 
   const months = [
@@ -155,7 +176,7 @@ export const getDashboardSummaryService = async () => {
   }));
 
   // ==========================
-  // Policy Type Distribution
+  // Policy Distribution
   // ==========================
 
   const policyTypeMap = {};
@@ -182,6 +203,17 @@ export const getDashboardSummaryService = async () => {
     0
   );
 
+  // ==========================
+  // Policy Expiry Alerts
+  // ==========================
+
+  const upcomingRenewals = policyExpiryPolicies.map((policy) => ({
+  id: policy.id,
+  policyNumber: policy.policyNumber,
+  customerName: `${policy.customer.firstName} ${policy.customer.lastName}`,
+  policyType: policy.policyType,
+  endDate: policy.endDate,
+}));
   return {
     totalCustomers,
     totalPolicies,
@@ -222,5 +254,7 @@ export const getDashboardSummaryService = async () => {
         value: pendingClaims,
       },
     ],
+
+    upcomingRenewals,
   };
 };

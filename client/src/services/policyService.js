@@ -52,13 +52,10 @@ export const renewPolicy = async (id) => {
   return response.data;
 };
 
-// Get Expiring Policies
-export const getExpiringPolicies = async (days = 30) => {
-  const response = await axiosInstance.get("/policies/expiring", {
-    params: {
-      days,
-    },
-  });
+export const getUpcomingRenewals = async () => {
+  const response = await axiosInstance.get(
+    "/policies/upcoming-renewals"
+  );
 
   return response.data.data;
 };

@@ -122,7 +122,11 @@ export const getPolicyByIdService = async (id) => {
 };
 
 export const updatePolicyService = async (id, policyData) => {
-  return await prisma.policy.update({
+  console.log("========== UPDATE POLICY ==========");
+  console.log("Policy ID:", id);
+  console.log("Incoming Data:", policyData);
+
+  const updatedPolicy = await prisma.policy.update({
     where: {
       id,
     },
@@ -131,6 +135,10 @@ export const updatePolicyService = async (id, policyData) => {
       customer: true,
     },
   });
+
+  console.log("Updated Policy:", updatedPolicy);
+
+  return updatedPolicy;
 };
 
 // Cancel Policy
@@ -179,30 +187,29 @@ export const renewPolicyService = async (id) => {
   });
 };
 
-// Policies Expiring Soon
-export const getExpiringPoliciesService = async (days = 30) => {
-  const today = new Date();
-
-  const futureDate = new Date();
-  futureDate.setDate(today.getDate() + days);
-
-  return await prisma.policy.findMany({
+// Upcoming Renewals
+export const getUpcomingRenewalsService = async () => {
+  const policies = await prisma.policy.findMany({
     where: {
       status: "ACTIVE",
-      endDate: {
-        gte: today,
-        lte: futureDate,
-      },
-    },
-    include: {
-      customer: true,
     },
     orderBy: {
       endDate: "asc",
     },
+    take: 5,
+    include: {
+      customer: true,
+    },
   });
-};
 
+  return policies.map((policy) => ({
+    id: policy.id,
+    policyNumber: policy.policyNumber,
+    customerName: `${policy.customer.firstName} ${policy.customer.lastName}`,
+    endDate: policy.endDate,
+    policyType: policy.policyType,
+  }));
+};
 // Legacy Delete
 export const deletePolicyService = async (id) => {
   return await prisma.policy.delete({

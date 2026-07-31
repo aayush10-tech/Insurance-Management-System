@@ -11,7 +11,7 @@ import {
 import {
   createPolicy,
   getAllPolicies,
-  getExpiringPolicies,
+  getUpcomingRenewals,
   getPolicyById,
   updatePolicy,
   deletePolicy,
@@ -41,14 +41,18 @@ router.get("/", authMiddleware, getAllPolicies);
 
 /**
  * @swagger
- * /policies/expiring:
+ * /policies/upcoming-renewals:
  *   get:
- *     summary: Get policies expiring within the next 30 days
+ *     summary: Get upcoming policy renewals
  *     tags: [Policies]
  *     security:
  *       - bearerAuth: []
  */
-router.get("/expiring", authMiddleware, getExpiringPolicies);
+router.get(
+  "/upcoming-renewals",
+  authMiddleware,
+  getUpcomingRenewals
+);
 
 /**
  * @swagger
@@ -119,7 +123,7 @@ router.patch("/:id/renew", authMiddleware, renewPolicy);
  * @swagger
  * /policies/{id}:
  *   delete:
- *     summary: Delete Policy (Legacy)
+ *     summary: Delete Policy
  *     tags: [Policies]
  *     security:
  *       - bearerAuth: []

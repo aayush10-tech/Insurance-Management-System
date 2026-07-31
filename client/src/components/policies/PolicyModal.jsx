@@ -76,6 +76,7 @@ const PolicyModal = ({
       let response;
 
       if (mode === "edit") {
+        console.log("Payload being sent:", payload);
         response = await updatePolicy(policy.id, payload);
       } else {
         response = await createPolicy(payload);

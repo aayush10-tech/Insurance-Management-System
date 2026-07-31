@@ -6,7 +6,7 @@ import {
   deletePolicyService,
   cancelPolicyService,
   renewPolicyService,
-  getExpiringPoliciesService,
+  getUpcomingRenewalsService,
 } from "../services/policy.service.js";
 
 import asyncHandler from "../utils/asyncHandler.js";
@@ -64,14 +64,12 @@ export const getAllPolicies = asyncHandler(async (req, res) => {
   );
 });
 
-// Get Expiring Policies
-export const getExpiringPolicies = asyncHandler(async (req, res) => {
-  const days = Number(req.query.days) || 30;
-
-  const policies = await getExpiringPoliciesService(days);
+// Get Upcoming Renewals
+export const getUpcomingRenewals = asyncHandler(async (req, res) => {
+  const policies = await getUpcomingRenewalsService();
 
   return res.status(200).json(
-    new ApiResponse(200, "Expiring policies fetched successfully", {
+    new ApiResponse(200, "Upcoming renewals fetched successfully", {
       totalPolicies: policies.length,
       policies,
     })
@@ -99,6 +97,9 @@ export const getPolicyById = asyncHandler(async (req, res) => {
 export const updatePolicy = asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
 
+  console.log("Controller ID:", id);
+  console.log("Controller Body:", req.body);
+
   const existingPolicy = await getPolicyByIdService(id);
 
   if (!existingPolicy) {
@@ -106,6 +107,8 @@ export const updatePolicy = asyncHandler(async (req, res) => {
   }
 
   const updatedPolicy = await updatePolicyService(id, req.body);
+
+  console.log("Updated Policy Returned:", updatedPolicy);
 
   return res.status(200).json(
     new ApiResponse(200, "Policy updated successfully", {

@@ -6,7 +6,7 @@ import PolicyDistributionChart from "../../components/ui/PolicyDistributionChart
 import ClaimsChart from "../../components/ui/ClaimsChart";
 import RecentCustomers from "../../components/ui/RecentCustomers";
 import RecentClaims from "../../components/ui/RecentClaims";
-
+import UpcomingRenewals from "../../components/ui/UpcomingRenewals";
 import useDashboard from "../../hooks/useDashboard";
 
 const Dashboard = () => {
@@ -101,15 +101,15 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <RecentCustomers
-            customers={dashboard?.recentCustomers}
-          />
+<div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+  <RecentCustomers customers={dashboard?.recentCustomers} />
 
-          <RecentClaims
-            claims={dashboard?.recentClaims}
-          />
-        </div>
+  <RecentClaims claims={dashboard?.recentClaims} />
+
+  <UpcomingRenewals
+  policies={dashboard?.upcomingRenewals || []}
+/>
+</div>
       </div>
     </DashboardLayout>
   );
