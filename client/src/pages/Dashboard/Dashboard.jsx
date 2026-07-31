@@ -108,6 +108,7 @@ const Dashboard = () => {
 
   <UpcomingRenewals
   policies={dashboard?.upcomingRenewals || []}
+  expiringPolicies={dashboard?.expiringPolicies || []}
 />
 </div>
       </div>
