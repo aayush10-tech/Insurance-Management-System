@@ -2,8 +2,6 @@ import { getDashboardSummaryService } from "../services/dashboard.service.js";
 
 import ApiResponse from "../utils/apiResponse.js";
 
-
-
 export const getDashboardSummary = async (req, res, next) => {
 
   try {

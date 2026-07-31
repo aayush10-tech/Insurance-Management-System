@@ -1,7 +1,11 @@
 import prisma from "../config/prisma.js";
 
 export const getDashboardSummaryService = async () => {
-  
+  console.log("Dashboard service started");
+  console.log("Before Promise.all");
+  const thirtyDaysLater = new Date();
+  thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+
   const [
     totalCustomers,
     totalPolicies,
@@ -22,6 +26,8 @@ export const getDashboardSummaryService = async () => {
     policies,
 
     policyExpiryPolicies,
+
+    policyExpiringSoon,
   ] = await Promise.all([
     prisma.customer.count(),
 
@@ -101,25 +107,55 @@ export const getDashboardSummaryService = async () => {
       },
     }),
 
-    prisma.policy.findMany({
-  where: {
-    status: "ACTIVE",
-  },
-  include: {
-    customer: {
-      select: {
-        firstName: true,
-        lastName: true,
-      },
-    },
-  },
-  orderBy: {
-    endDate: "asc",
-  },
-  take: 5,
-}),
-  ]);
+    // ==========================
+    // Upcoming Renewals
+    // ==========================
 
+    prisma.policy.findMany({
+      where: {
+        status: "ACTIVE",
+      },
+      include: {
+        customer: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+      orderBy: {
+        endDate: "asc",
+      },
+      take: 5,
+    }),
+
+    // ==========================
+    // Expiring Policies (Next 30 Days)
+    // ==========================
+
+    prisma.policy.findMany({
+      where: {
+        status: "ACTIVE",
+        endDate: {
+          gte: new Date(),
+          lte: thirtyDaysLater,
+        },
+      },
+      include: {
+        customer: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+      orderBy: {
+        endDate: "asc",
+      },
+    }),
+  ]);
+   console.log("After Promise.all");
+ 
   const months = [
     "Jan",
     "Feb",
@@ -204,16 +240,40 @@ export const getDashboardSummaryService = async () => {
   );
 
   // ==========================
-  // Policy Expiry Alerts
+  // Upcoming Renewals
   // ==========================
 
   const upcomingRenewals = policyExpiryPolicies.map((policy) => ({
-  id: policy.id,
-  policyNumber: policy.policyNumber,
-  customerName: `${policy.customer.firstName} ${policy.customer.lastName}`,
-  policyType: policy.policyType,
-  endDate: policy.endDate,
-}));
+    id: policy.id,
+    policyNumber: policy.policyNumber,
+    customerName: `${policy.customer.firstName} ${policy.customer.lastName}`,
+    policyType: policy.policyType,
+    endDate: policy.endDate,
+  }));
+
+  // ==========================
+  // Expiring Policies
+  // ==========================
+
+  const expiringPolicies = policyExpiringSoon.map((policy) => {
+    const today = new Date();
+
+    const endDate = new Date(policy.endDate);
+
+    const daysRemaining = Math.ceil(
+      (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    return {
+      id: policy.id,
+      policyNumber: policy.policyNumber,
+      customerName: `${policy.customer.firstName} ${policy.customer.lastName}`,
+      policyType: policy.policyType,
+      endDate,
+      daysRemaining,
+    };
+  });
+
   return {
     totalCustomers,
     totalPolicies,
@@ -256,5 +316,7 @@ export const getDashboardSummaryService = async () => {
     ],
 
     upcomingRenewals,
+
+    expiringPolicies,
   };
 };

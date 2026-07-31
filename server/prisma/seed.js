@@ -269,11 +269,15 @@ async function main() {
     "Yearly",
     "Half-Yearly",
   ];
+  const expiryDays = [5, 9, 14, 20, 28, 45, 60, 90, 180, 365];
 
   for (let i = 0; i < customers.length; i++) {
     const premium = 5000 + i * 1500;
     const coverage = premium * 100;
+    const startDate = new Date();
 
+const endDate = new Date();
+endDate.setDate(endDate.getDate() + expiryDays[i]);
     const policy = await prisma.policy.create({
       data: {
         policyNumber: `POL2026${1000 + i}`,
@@ -287,8 +291,8 @@ async function main() {
 
         paymentFrequency: frequencies[i],
 
-        startDate: new Date("2026-01-01"),
-        endDate: new Date("2027-01-01"),
+        startDate,
+        endDate,
 
         status: i % 4 === 0 ? "EXPIRED" : "ACTIVE",
 
