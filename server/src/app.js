@@ -14,7 +14,7 @@ import documentRoutes from "./routes/document.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import swaggerSpec from "./docs/swagger.js";
 import errorMiddleware from "./middleware/error.middleware.js";
-
+import healthRoutes from "./routes/health.routes.js";
 const app = express();
 
 // Middleware
@@ -383,7 +383,8 @@ Available API Modules
 </html>
 `);
 });
-
+// Health Route
+app.use("/health", healthRoutes);
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
