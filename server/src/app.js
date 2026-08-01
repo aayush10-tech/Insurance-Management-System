@@ -2,7 +2,10 @@ import express from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import path from "path";
-
+import helmet from "helmet";
+import compression from "compression";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
@@ -20,15 +23,52 @@ import notFoundMiddleware from "./middleware/notFound.middleware.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 
 const app = express();
-
+// Production Settings
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
 /* ===========================
    Middleware
 =========================== */
 
-app.use(cors());
+/* ===========================
+   Security Middleware
+=========================== */
+
+app.use(helmet());
+
+app.use(compression());
+
+app.use(
+  morgan(
+    ":method :url :status :response-time ms"
+  )
+);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    success: false,
+    message:
+      "Too many requests. Please try again later.",
+  },
+});
+
+app.use(limiter);
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-app.use("/uploads", express.static(path.resolve("uploads")));
+app.use(
+  "/uploads",
+  express.static(path.resolve("uploads"))
+);
 
 /* ===========================
    Landing Page
@@ -266,7 +306,6 @@ font-weight:600;
 
 <p>Developed by <strong>Aayush Mahadik</strong></p>
 
-<p>MCA Final Year Project • 2026</p>
 
 </div>
 
