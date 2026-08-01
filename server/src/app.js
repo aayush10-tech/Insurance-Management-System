@@ -346,7 +346,7 @@ Available API Modules
 
 <tr><td>Reports</td><td>/api/reports</td></tr>
 
-<tr><td>Dashboard</td><td>/api/dashboard</td></tr>
+<tr><td>Dashboard 🔒</td><td>/api/dashboard/summary</td></tr>
 
 </table>
 
@@ -358,8 +358,8 @@ Available API Modules
 📘 Swagger Documentation
 </a>
 
-<a class="btn green" href="/api/dashboard">
-📊 Dashboard API
+<a class="btn green" href="/health">
+💚 Health Check
 </a>
 
 </div>
