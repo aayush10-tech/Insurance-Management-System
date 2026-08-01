@@ -58,9 +58,54 @@ export const deleteDocument = async (id) => {
 };
 
 // Download Document
-export const downloadDocument = (id) => {
-  window.open(
-    `${import.meta.env.VITE_API_URL}/documents/${id}/download`,
-    "_blank"
-  );
+export const downloadDocument = async (id) => {
+  try {
+    const response = await axiosInstance.get(
+      `/documents/${id}/download`,
+      {
+        responseType: "blob",
+      }
+    );
+
+    // Create file URL
+    const url = window.URL.createObjectURL(
+      new Blob([response.data])
+    );
+
+    // Create download link
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    // Try to get filename from response header
+    const disposition =
+      response.headers["content-disposition"];
+
+    let fileName = `document-${id}`;
+
+    if (disposition) {
+      const match = disposition.match(/filename="?(.+?)"?$/);
+
+      if (match) {
+        fileName = match[1];
+      }
+    }
+
+    link.setAttribute("download", fileName);
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download failed:", error);
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to download document."
+    );
+  }
 };
