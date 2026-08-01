@@ -140,4 +140,4 @@ Developed by <strong>Aayush Mahadik</strong>
 `);
 };
 
-export default notFoundMiddleware;s
+export default notFoundMiddleware;
