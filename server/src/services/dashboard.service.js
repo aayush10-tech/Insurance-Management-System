@@ -1,8 +1,6 @@
 import prisma from "../config/prisma.js";
 
 export const getDashboardSummaryService = async () => {
-  console.log("Dashboard service started");
-  console.log("Before Promise.all");
   const thirtyDaysLater = new Date();
   thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
 
@@ -154,7 +152,6 @@ export const getDashboardSummaryService = async () => {
       },
     }),
   ]);
-   console.log("After Promise.all");
  
   const months = [
     "Jan",

@@ -7,47 +7,94 @@ const UpcomingRenewals = ({
   const [activeTab, setActiveTab] = useState("upcoming");
 
   const getStatus = (days) => {
-    if (days <= 7) {
+    if (days <= 7)
       return {
         label: "Critical",
-        bg: "bg-red-100",
-        text: "text-red-700",
+        color: "bg-red-100 text-red-700",
       };
-    }
 
-    if (days <= 15) {
+    if (days <= 15)
       return {
         label: "Due Soon",
-        bg: "bg-orange-100",
-        text: "text-orange-700",
+        color: "bg-orange-100 text-orange-700",
       };
-    }
 
     return {
       label: "Upcoming",
-      bg: "bg-yellow-100",
-      text: "text-yellow-700",
+      color: "bg-blue-100 text-blue-700",
     };
   };
 
-  const totalAlerts = policies.length + expiringPolicies.length;
+  const renderCard = (policy, expiring = false) => {
+    const status = getStatus(policy.daysRemaining);
+
+    return (
+      <div
+        key={policy.id}
+        className="rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:border-blue-300 hover:bg-white"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="truncate font-semibold text-slate-800">
+              {policy.customerName}
+            </h3>
+
+            <p className="mt-1 text-sm text-slate-500">
+              {policy.policyNumber}
+            </p>
+
+            <p className="text-sm text-slate-500">
+              {policy.policyType}
+            </p>
+
+            <p className="mt-2 text-sm text-slate-600">
+              {expiring ? "Expiry" : "Renewal"} :
+              {" "}
+              {new Date(policy.endDate).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </p>
+
+            {expiring && (
+              <p className="mt-2 text-sm font-medium text-slate-700">
+                {policy.daysRemaining} day
+                {policy.daysRemaining !== 1 ? "s" : ""} remaining
+              </p>
+            )}
+          </div>
+
+          {expiring && (
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${status.color}`}
+            >
+              {status.label}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="bg-white rounded-2xl border border-blue-200 shadow-sm p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xl font-semibold text-blue-700">
-          🔔 Policy Alerts
+    <div className="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
+
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-slate-800">
+          Policy Alerts
         </h2>
 
-        
+        <p className="mt-1 text-sm text-slate-500">
+          Upcoming renewals & expiring policies
+        </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-5">
+      <div className="mb-6 grid grid-cols-2 gap-2">
+
         <button
           onClick={() => setActiveTab("upcoming")}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition ${
+          className={`rounded-lg py-2 text-sm font-semibold transition ${
             activeTab === "upcoming"
               ? "bg-blue-600 text-white"
               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -58,7 +105,7 @@ const UpcomingRenewals = ({
 
         <button
           onClick={() => setActiveTab("expiring")}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition ${
+          className={`rounded-lg py-2 text-sm font-semibold transition ${
             activeTab === "expiring"
               ? "bg-red-600 text-white"
               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -66,104 +113,31 @@ const UpcomingRenewals = ({
         >
           Expiring ({Math.min(expiringPolicies.length, 3)})
         </button>
+
       </div>
 
-      {/* Upcoming Renewals */}
-      {activeTab === "upcoming" && (
-        <>
-          {policies.length === 0 ? (
-            <div className="text-center py-10 text-slate-500">
-              No upcoming renewals found.
-            </div>
-          ) : (
-            <div className="space-y-4 max-h-[540px] overflow-y-auto pr-1">
-              {policies.slice(0, 3).map((policy) => (
-                <div
-                  key={policy.id}
-                  className="border border-blue-200 rounded-xl p-4 bg-blue-50"
-                >
-                  <h3 className="font-semibold text-slate-800">
-                    {policy.customerName}
-                  </h3>
-
-                  <p className="text-sm text-slate-500 mt-1">
-                    Policy No: {policy.policyNumber}
-                  </p>
-
-                  <p className="text-sm text-slate-500">
-                    Policy Type: {policy.policyType}
-                  </p>
-
-                  <p className="text-sm text-slate-500">
-                    Renewal Date:{" "}
-                    {new Date(policy.endDate).toLocaleDateString("en-GB", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-})}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
+      {activeTab === "upcoming" ? (
+        policies.length === 0 ? (
+          <div className="flex h-64 items-center justify-center text-slate-500">
+            No upcoming renewals.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {policies.slice(0, 3).map((policy) => renderCard(policy))}
+          </div>
+        )
+      ) : expiringPolicies.length === 0 ? (
+        <div className="flex h-64 items-center justify-center text-slate-500">
+          No expiring policies.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {expiringPolicies
+            .slice(0, 3)
+            .map((policy) => renderCard(policy, true))}
+        </div>
       )}
 
-      {/* Expiring Policies */}
-      {activeTab === "expiring" && (
-        <>
-          {expiringPolicies.length === 0 ? (
-            <div className="text-center py-10 text-slate-500">
-              No expiring policies.
-            </div>
-          ) : (
-            <div className="space-y-4 max-h-[540px] overflow-y-auto pr-1">
-              {expiringPolicies.slice(0, 3).map((policy) => {
-                const status = getStatus(policy.daysRemaining);
-
-                return (
-                  <div
-                    key={policy.id}
-                    className="border border-red-200 rounded-xl p-4 bg-red-50"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-slate-800">
-                          {policy.customerName}
-                        </h3>
-
-                        <p className="text-sm text-slate-500 mt-1">
-                          Policy No: {policy.policyNumber}
-                        </p>
-
-                        <p className="text-sm text-slate-500">
-                          Policy Type: {policy.policyType}
-                        </p>
-
-                        <p className="text-sm text-slate-500">
-                          Expiry Date:{" "}
-                          {new Date(policy.endDate).toLocaleDateString()}
-                        </p>
-
-                        <p className="text-sm font-medium mt-2 text-slate-700">
-                          {policy.daysRemaining} day
-                          {policy.daysRemaining !== 1 ? "s" : ""} remaining
-                        </p>
-                      </div>
-
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}
-                      >
-                        {status.label}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </>
-      )}
     </div>
   );
 };

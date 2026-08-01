@@ -8,10 +8,10 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "#22c55e", // Approved
-  "#f59e0b", // Pending
-  "#ef4444", // Rejected
-  "#3b82f6", // Others (Future)
+  "#22c55e",
+  "#f59e0b",
+  "#ef4444",
+  "#3b82f6",
 ];
 
 const ClaimsChart = ({ data = [] }) => {
@@ -23,42 +23,44 @@ const ClaimsChart = ({ data = [] }) => {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 h-full">
-      <div className="flex flex-col gap-2 mb-6">
-        <h2 className="text-xl font-semibold text-slate-800">
-          Claims Status
-        </h2>
+    <div className="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
 
-        <p className="text-sm text-slate-500">
-          Current insurance claim distribution
-        </p>
+      <div className="mb-6 flex items-start justify-between">
 
-        <div className="mt-2">
-          <p className="text-sm text-slate-500">
-            Total Claims
+        <div>
+          <h2 className="text-xl font-bold text-slate-800">
+            Claims Status
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Overview of all claims by status
+          </p>
+        </div>
+
+        <div className="text-right">
+          <p className="text-xs uppercase tracking-wider text-slate-500">
+            Total
           </p>
 
           <h3 className="text-3xl font-bold text-emerald-600">
             {totalClaims}
           </h3>
         </div>
+
       </div>
 
-      <ResponsiveContainer
-        width="100%"
-        height={320}
-      >
+      <ResponsiveContainer width="100%" height={320}>
         <PieChart>
+
           <Pie
             data={chartData}
             dataKey="value"
             nameKey="name"
-            innerRadius={65}
-            outerRadius={100}
+            innerRadius={70}
+            outerRadius={105}
             paddingAngle={3}
-            label={({ name, percent }) =>
-              `${name} ${(percent * 100).toFixed(0)}%`
-            }
+            stroke="white"
+            strokeWidth={3}
           >
             {chartData.map((entry, index) => (
               <Cell
@@ -68,16 +70,19 @@ const ClaimsChart = ({ data = [] }) => {
             ))}
           </Pie>
 
-          <Tooltip
-            formatter={(value) => [value, "Claims"]}
+          <Tooltip />
+
+          <Legend
+            verticalAlign="bottom"
+            iconType="circle"
+            wrapperStyle={{
+              paddingTop: 20,
+            }}
           />
 
-          <Legend />
-            verticalAlign="bottom"
-            height={36}
-          /
         </PieChart>
       </ResponsiveContainer>
+
     </div>
   );
 };

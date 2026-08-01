@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
@@ -43,6 +43,15 @@ const PaymentModal = ({
     defaultValues,
   });
 
+  const loadPolicies = useCallback(async () => {
+    try {
+      const data = await getPolicies(1, 1000, "");
+      setPolicies(data.policies || []);
+    } catch (error) {
+      console.error("Failed to load policies:", error);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -63,16 +72,7 @@ const PaymentModal = ({
     } else {
       reset(defaultValues);
     }
-  }, [isOpen, mode, payment]);
-
-  const loadPolicies = async () => {
-    try {
-      const data = await getPolicies(1, 1000, "");
-      setPolicies(data.policies || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  }, [isOpen, mode, payment, loadPolicies, reset]);
 
   const onSubmit = async (data) => {
     try {
@@ -83,13 +83,10 @@ const PaymentModal = ({
         paymentDate: new Date(data.paymentDate).toISOString(),
       };
 
-      let response;
-
-      if (mode === "edit") {
-        response = await updatePayment(payment.id, payload);
-      } else {
-        response = await createPayment(payload);
-      }
+      const response =
+        mode === "edit"
+          ? await updatePayment(payment.id, payload)
+          : await createPayment(payload);
 
       if (response.success) {
         toast.success(
@@ -105,7 +102,7 @@ const PaymentModal = ({
         toast.error(response.message);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Payment save failed:", error);
 
       toast.error(
         error.response?.data?.message ||
@@ -117,12 +114,9 @@ const PaymentModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-5">
-
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-
-        <div className="flex justify-between items-center border-b px-6 py-5">
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5">
+      <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b px-6 py-5">
           <h2 className="text-2xl font-bold">
             {mode === "edit"
               ? "Edit Payment"
@@ -132,18 +126,16 @@ const PaymentModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-3xl hover:text-red-600"
+            className="text-3xl transition hover:text-red-600"
           >
             ×
           </button>
-
         </div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="p-6 space-y-6"
+          className="space-y-6 p-6"
         >
-
           <PaymentForm
             register={register}
             control={control}
@@ -152,19 +144,18 @@ const PaymentModal = ({
           />
 
           <div className="flex justify-end gap-4">
-
             <button
               type="button"
               onClick={onClose}
-              className="border px-5 py-3 rounded-lg"
+              className="rounded-lg border px-5 py-3"
             >
               Cancel
             </button>
 
             <button
-              disabled={isSubmitting}
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+              disabled={isSubmitting}
+              className="rounded-lg bg-blue-600 px-6 py-3 text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting
                 ? "Saving..."
@@ -172,13 +163,9 @@ const PaymentModal = ({
                 ? "Update Payment"
                 : "Save Payment"}
             </button>
-
           </div>
-
         </form>
-
       </div>
-
     </div>
   );
 };

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+
 import DashboardLayout from "../../components/layout/DashboardLayout";
 
 import DocumentTable from "../../components/documents/DocumentTable";
@@ -7,6 +8,8 @@ import DocumentPagination from "../../components/documents/DocumentPagination";
 import DocumentModal from "../../components/documents/DocumentModal";
 import ViewDocumentModal from "../../components/documents/ViewDocumentModal";
 import DeleteDocumentModal from "../../components/documents/DeleteDocumentModal";
+
+import Loader from "../../components/common/Loader";
 
 import useDocuments from "../../hooks/useDocuments";
 import { downloadDocument } from "../../services/documentService";
@@ -36,18 +39,18 @@ const Documents = () => {
 
   const [selectedDocument, setSelectedDocument] = useState(null);
 
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     try {
       const data = await getCustomers(1, 1000, "");
       setCustomers(data.customers || []);
     } catch (error) {
-      console.error(error);
+      console.error("Customer fetch failed:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchCustomers();
+  }, [fetchCustomers]);
 
   const handleAdd = () => {
     setSelectedDocument(null);
@@ -89,9 +92,15 @@ const Documents = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+
+        {/* Header */}
+
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+
           <div>
-            <h1 className="text-4xl font-bold">Documents</h1>
+            <h1 className="text-4xl font-bold">
+              Documents
+            </h1>
 
             <p className="text-slate-500 mt-2">
               Total Documents: {totalDocuments}
@@ -100,10 +109,11 @@ const Documents = () => {
 
           <button
             onClick={handleAdd}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition"
           >
             + Upload Document
           </button>
+
         </div>
 
         <DocumentSearch
@@ -115,9 +125,7 @@ const Documents = () => {
         />
 
         {loading ? (
-          <div className="bg-white rounded-xl border py-20 text-center">
-            Loading...
-          </div>
+          <Loader text="Loading documents..." />
         ) : (
           <>
             <DocumentTable
@@ -172,6 +180,7 @@ const Documents = () => {
             setSelectedDocument(null);
           }}
         />
+
       </div>
     </DashboardLayout>
   );

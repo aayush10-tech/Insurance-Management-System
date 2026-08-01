@@ -9,71 +9,46 @@ const PolicyTable = ({
   onReceivePayment,
 }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[1100px]">
-          <thead className="bg-slate-100">
+    <div className="w-full bg-white rounded-2xl shadow-sm border border-slate-200">
+      <table className="w-full table-fixed">
+        <thead className="bg-slate-50">
+          <tr>
+            <th className="w-[11%] px-4 py-4 text-left">Policy No.</th>
+            <th className="w-[14%] px-4 py-4 text-left">Policy</th>
+            <th className="w-[18%] px-4 py-4 text-left">Customer</th>
+            <th className="w-[11%] px-4 py-4 text-left">Type</th>
+            <th className="w-[10%] px-4 py-4 text-left">Premium</th>
+            <th className="w-[11%] px-4 py-4 text-left">Coverage</th>
+            <th className="w-[10%] px-4 py-4 text-center">Status</th>
+            <th className="w-[15%] px-4 py-4 text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {policies.length === 0 ? (
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Policy No.
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Policy Name
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Customer
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Type
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Premium
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Coverage
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Status
-              </th>
-
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
-                Actions
-              </th>
+              <td
+                colSpan={8}
+                className="py-12 text-center text-slate-500"
+              >
+                No policies found.
+              </td>
             </tr>
-          </thead>
-
-          <tbody>
-            {policies.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={8}
-                  className="text-center py-12 text-slate-500"
-                >
-                  No policies found.
-                </td>
-              </tr>
-            ) : (
-              policies.map((policy) => (
-                <PolicyRow
-                  key={policy.id}
-                  policy={policy}
-                  onView={onView}
-                  onEdit={onEdit}
-                  onCancel={onCancel}
-                  onRenew={onRenew}
-                  onReceivePayment={onReceivePayment}
-                />
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+          ) : (
+            policies.map((policy) => (
+              <PolicyRow
+                key={policy.id}
+                policy={policy}
+                onView={onView}
+                onEdit={onEdit}
+                onCancel={onCancel}
+                onRenew={onRenew}
+                onReceivePayment={onReceivePayment}
+              />
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -41,9 +41,9 @@ const CustomerTable = ({
                 Annual Income
               </th>
 
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
-                Actions
-              </th>
+              <th className="w-48 px-6 py-4 text-center text-sm font-semibold text-slate-700">
+  Actions
+</th>
 
             </tr>
 

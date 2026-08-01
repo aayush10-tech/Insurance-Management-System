@@ -7,65 +7,71 @@ const ClaimTable = ({
   onDelete,
 }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[1100px]">
-          <thead className="bg-slate-100">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <table className="w-full">
+
+        <thead className="bg-slate-50">
+          <tr className="text-left text-sm font-semibold text-slate-700">
+
+            <th className="px-6 py-5">
+              Claim No.
+            </th>
+
+            <th className="px-6 py-5">
+              Policy No.
+            </th>
+
+            <th className="px-6 py-5">
+              Customer
+            </th>
+
+            <th className="px-6 py-5">
+              Claim Amount
+            </th>
+
+            <th className="px-6 py-5">
+              Incident Date
+            </th>
+
+            <th className="px-6 py-5">
+              Status
+            </th>
+
+            <th className="px-6 py-5 text-center">
+              Actions
+            </th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {claims.length === 0 ? (
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Claim No.
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Policy No.
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Customer
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Claim Amount
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Incident Date
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                Status
-              </th>
-
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
-                Actions
-              </th>
+              <td
+                colSpan={7}
+                className="py-20 text-center text-slate-500"
+              >
+                No Claims Found
+              </td>
             </tr>
-          </thead>
+          ) : (
+            claims.map((claim) => (
+              <ClaimRow
+                key={claim.id}
+                claim={claim}
+                onView={onView}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))
+          )}
 
-          <tbody>
-            {claims.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={7}
-                  className="text-center py-12 text-slate-500"
-                >
-                  No claims found.
-                </td>
-              </tr>
-            ) : (
-              claims.map((claim) => (
-                <ClaimRow
-                  key={claim.id}
-                  claim={claim}
-                  onView={onView}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+
+      </table>
+
     </div>
   );
 };

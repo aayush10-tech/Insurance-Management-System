@@ -15,10 +15,13 @@ const Dashboard = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex justify-center items-center h-96">
-          <h2 className="text-2xl font-semibold text-slate-600">
-            Loading Dashboard...
-          </h2>
+        <div className="flex h-[70vh] items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+            <h2 className="mt-6 text-2xl font-semibold text-slate-700">
+              Loading Dashboard...
+            </h2>
+          </div>
         </div>
       </DashboardLayout>
     );
@@ -64,53 +67,79 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-slate-800">
-            Dashboard
-          </h1>
 
-          <p className="text-slate-500 mt-2">
-            Welcome to the Insurance Management System
-          </p>
+        {/* Header */}
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-800">
+              Insurance Dashboard
+            </h1>
+
+            <p className="mt-2 text-slate-500">
+              Monitor customers, policies, claims and premium collection from one place.
+            </p>
+          </div>
+
+          
         </div>
 
         {/* KPI Cards */}
         <StatsGrid stats={stats} />
 
-        {/* Revenue & Customer Growth */}
+        {/* Main Charts */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+  <div className="xl:col-span-2">
+            <RevenueChart
+              data={dashboard?.monthlyRevenue || []}
+            />
+          </div>
+
+          <div>
+            <ClaimsChart
+              data={dashboard?.claimsByStatus || []}
+            />
+          </div>
+
+        </div>
+
+        {/* Secondary Charts */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <RevenueChart
-            data={dashboard?.monthlyRevenue || []}
-          />
 
           <CustomerGrowthChart
             data={dashboard?.customerGrowth || []}
           />
-        </div>
 
-        {/* Policy Distribution & Claims */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <PolicyDistributionChart
             data={dashboard?.policyDistribution || []}
           />
 
-          <ClaimsChart
-            data={dashboard?.claimsByStatus || []}
-          />
         </div>
 
-        {/* Recent Activity */}
-<div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-  <RecentCustomers customers={dashboard?.recentCustomers} />
+        {/* Bottom Section */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
 
-  <RecentClaims claims={dashboard?.recentClaims} />
+  <div className="xl:col-span-4">
+            <RecentCustomers
+              customers={dashboard?.recentCustomers}
+            />
+          </div>
 
-  <UpcomingRenewals
-  policies={dashboard?.upcomingRenewals || []}
-  expiringPolicies={dashboard?.expiringPolicies || []}
-/>
-</div>
+          <div className="xl:col-span-4">
+            <RecentClaims
+              claims={dashboard?.recentClaims}
+            />
+          </div>
+
+          <div className="2xl:col-span-4">
+            <UpcomingRenewals
+              policies={dashboard?.upcomingRenewals || []}
+              expiringPolicies={dashboard?.expiringPolicies || []}
+            />
+          </div>
+
+        </div>
+
       </div>
     </DashboardLayout>
   );

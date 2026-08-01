@@ -41,8 +41,8 @@ const Claims = () => {
       const claim = await getClaimById(id);
       setSelectedClaim(claim);
       setIsViewOpen(true);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -51,8 +51,8 @@ const Claims = () => {
       const claim = await getClaimById(id);
       setEditClaim(claim);
       setIsEditOpen(true);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -64,22 +64,34 @@ const Claims = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          <div>
-            <h1 className="text-4xl font-bold">Claims</h1>
 
-            <p className="text-slate-500 mt-2">
-              Total Claims: {totalClaims}
+        {/* Header */}
+
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+          <div>
+            <h1 className="text-5xl font-bold tracking-tight text-slate-900">
+              Claims
+            </h1>
+
+            <p className="mt-2 text-slate-500 text-lg">
+              Total Claims :
+              <span className="ml-2 font-semibold text-slate-700">
+                {totalClaims}
+              </span>
             </p>
           </div>
 
           <button
             onClick={() => setIsAddOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl"
+            className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow hover:bg-blue-700 transition"
           >
             + Add Claim
           </button>
+
         </div>
+
+        {/* Search */}
 
         <ClaimSearch
           value={search}
@@ -89,61 +101,72 @@ const Claims = () => {
           }}
         />
 
-        {loading ? (
-  <div className="bg-white rounded-xl border py-20 text-center">
-    Loading...
-  </div>
-) : (
-  <>
-    <ClaimTable
-      claims={claims}
-      onView={handleView}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-    />
+        {/* Table */}
 
-    <ClaimPagination
-      page={page}
-      totalPages={totalPages}
-      onPageChange={setPage}
-    />
-  </>
-)}
+        {loading ? (
+          <div className="rounded-2xl border bg-white py-20 text-center text-slate-500 shadow-sm">
+            Loading Claims...
+          </div>
+        ) : (
+          <>
+            <ClaimTable
+              claims={claims}
+              onView={handleView}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+
+            <ClaimPagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </>
+        )}
+
+        {/* Add */}
 
         <ClaimModal
           isOpen={isAddOpen}
-          onClose={() => setIsAddOpen(false)}
           refreshClaims={refreshClaims}
+          onClose={() => setIsAddOpen(false)}
         />
+
+        {/* Edit */}
 
         <ClaimModal
           isOpen={isEditOpen}
           initialData={editClaim}
           refreshClaims={refreshClaims}
           onClose={() => {
-            setIsEditOpen(false);
             setEditClaim(null);
+            setIsEditOpen(false);
           }}
         />
+
+        {/* View */}
 
         <ViewClaimModal
           isOpen={isViewOpen}
           claim={selectedClaim}
           onClose={() => {
-            setIsViewOpen(false);
             setSelectedClaim(null);
+            setIsViewOpen(false);
           }}
         />
+
+        {/* Delete */}
 
         <DeleteClaimModal
           isOpen={isDeleteOpen}
           claim={deleteClaimData}
           refreshClaims={refreshClaims}
           onClose={() => {
-            setIsDeleteOpen(false);
             setDeleteClaimData(null);
+            setIsDeleteOpen(false);
           }}
         />
+
       </div>
     </DashboardLayout>
   );

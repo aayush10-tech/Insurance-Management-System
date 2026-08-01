@@ -9,7 +9,7 @@ const UserTable = ({
 }) => {
   if (loading) {
     return (
-      <div className="py-10 text-center text-gray-500">
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-200 py-20 text-center text-gray-500">
         Loading users...
       </div>
     );
@@ -17,26 +17,47 @@ const UserTable = ({
 
   if (!users.length) {
     return (
-      <div className="py-10 text-center text-gray-500">
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-200 py-20 text-center text-gray-500">
         No users found.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow">
-      <table className="min-w-full">
-        <thead className="text-white bg-blue-600">
-          <tr>
-            <th className="px-6 py-3 text-left">Full Name</th>
-            <th className="px-6 py-3 text-left">Email</th>
-            <th className="px-6 py-3 text-left">Role</th>
-            <th className="px-6 py-3 text-left">Created</th>
-            <th className="px-6 py-3 text-center">Actions</th>
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+
+      <table className="w-full">
+
+        <thead className="bg-gray-50">
+
+          <tr className="text-gray-700">
+
+            <th className="px-6 py-5 text-left text-sm font-bold">
+              User
+            </th>
+
+            <th className="px-6 py-5 text-left text-sm font-bold">
+              Email
+            </th>
+
+            <th className="px-6 py-5 text-left text-sm font-bold">
+              Role
+            </th>
+
+            <th className="px-6 py-5 text-left text-sm font-bold">
+              Created
+            </th>
+
+            <th className="px-6 py-5 text-center text-sm font-bold w-52">
+              Actions
+            </th>
+
           </tr>
+
         </thead>
 
         <tbody>
+
           {users.map((user) => (
             <UserRow
               key={user.id}
@@ -46,8 +67,11 @@ const UserTable = ({
               onDelete={onDelete}
             />
           ))}
+
         </tbody>
+
       </table>
+
     </div>
   );
 };

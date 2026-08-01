@@ -8,42 +8,40 @@ const DocumentTable = ({
   onDownload,
 }) => {
   return (
-    <div className="overflow-x-auto rounded-lg shadow bg-white">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
-              #
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+      <table className="w-full">
+        <thead className="bg-gray-50">
+          <tr className="text-gray-700">
+            <th className="px-6 py-5 text-left text-sm font-bold">#</th>
+
+            <th className="px-6 py-5 text-left text-sm font-bold">
+              Document
             </th>
 
-            <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
-              Document Name
-            </th>
-
-            <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
+            <th className="px-6 py-5 text-left text-sm font-bold">
               Type
             </th>
 
-            <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
+            <th className="px-6 py-5 text-left text-sm font-bold">
               Customer
             </th>
 
-            <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
+            <th className="px-6 py-5 text-left text-sm font-bold">
               File
             </th>
 
-            <th className="px-6 py-3 text-center text-xs font-semibold uppercase">
+            <th className="px-6 py-5 text-center text-sm font-bold w-56">
               Actions
             </th>
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-gray-200">
+        <tbody>
           {documents.length === 0 ? (
             <tr>
               <td
                 colSpan={6}
-                className="py-8 text-center text-gray-500"
+                className="py-16 text-center text-gray-500"
               >
                 No documents found.
               </td>

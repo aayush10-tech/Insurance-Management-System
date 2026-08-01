@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 
 import { getDashboardReport } from "../services/reportService";
 import { exportPdf } from "../utils/exportPdf";
 import { exportExcel } from "../utils/exportExcel";
 
+import Loader from "../components/common/Loader";
 import { FaFilePdf, FaFileExcel } from "react-icons/fa";
 
 const StatCard = ({ title, value, color }) => (
@@ -26,20 +27,22 @@ const Reports = () => {
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState(null);
 
-  useEffect(() => {
-    fetchReport();
-  }, []);
-
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     try {
+      setLoading(true);
+
       const data = await getDashboardReport();
       setReport(data);
     } catch (err) {
-      console.error(err);
+      console.error("Report Error:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchReport();
+  }, [fetchReport]);
 
   const exportSummaryPdf = () => {
     if (!report) return;
@@ -109,11 +112,7 @@ const Reports = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex justify-center items-center h-96">
-          <h2 className="text-2xl font-semibold text-slate-600">
-            Loading Reports...
-          </h2>
-        </div>
+        <Loader text="Loading Reports..." />
       </DashboardLayout>
     );
   }
@@ -215,8 +214,7 @@ const Reports = () => {
           />
 
         </div>
-
-        {/* Recent Payments */}
+                {/* Recent Payments */}
 
         <div className="bg-white rounded-xl shadow-md">
 
@@ -259,11 +257,14 @@ const Reports = () => {
               </thead>
 
               <tbody>
-                                {report.recentPayments.map((payment) => (
+
+                {report.recentPayments.map((payment) => (
+
                   <tr
                     key={payment.id}
                     className="border-b hover:bg-slate-50"
                   >
+
                     <td className="p-4">
                       {payment.policy.policyNumber}
                     </td>
@@ -294,11 +295,17 @@ const Reports = () => {
                         payment.paymentDate
                       ).toLocaleDateString()}
                     </td>
+
                   </tr>
+
                 ))}
+
               </tbody>
+
             </table>
+
           </div>
+
         </div>
 
         {/* Recent Policies */}
@@ -316,21 +323,38 @@ const Reports = () => {
             <table className="w-full">
 
               <thead className="bg-slate-100">
+
                 <tr>
-                  <th className="text-left p-4">Policy</th>
-                  <th className="text-left p-4">Customer</th>
-                  <th className="text-left p-4">Type</th>
-                  <th className="text-left p-4">Status</th>
+
+                  <th className="text-left p-4">
+                    Policy
+                  </th>
+
+                  <th className="text-left p-4">
+                    Customer
+                  </th>
+
+                  <th className="text-left p-4">
+                    Type
+                  </th>
+
+                  <th className="text-left p-4">
+                    Status
+                  </th>
+
                 </tr>
+
               </thead>
 
               <tbody>
 
                 {report.recentPolicies.map((policy) => (
+
                   <tr
                     key={policy.id}
                     className="border-b hover:bg-slate-50"
                   >
+
                     <td className="p-4">
                       {policy.policyNumber}
                     </td>
@@ -345,6 +369,7 @@ const Reports = () => {
                     </td>
 
                     <td className="p-4">
+
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
                           policy.status === "ACTIVE"
@@ -356,8 +381,11 @@ const Reports = () => {
                       >
                         {policy.status}
                       </span>
+
                     </td>
+
                   </tr>
+
                 ))}
 
               </tbody>
@@ -383,7 +411,9 @@ const Reports = () => {
             <table className="w-full">
 
               <thead className="bg-slate-100">
+
                 <tr>
+
                   <th className="text-left p-4">
                     Claim No
                   </th>
@@ -399,16 +429,20 @@ const Reports = () => {
                   <th className="text-left p-4">
                     Status
                   </th>
+
                 </tr>
+
               </thead>
 
               <tbody>
 
                 {report.recentClaims.map((claim) => (
+
                   <tr
                     key={claim.id}
                     className="border-b hover:bg-slate-50"
                   >
+
                     <td className="p-4">
                       {claim.claimNumber}
                     </td>
@@ -425,6 +459,7 @@ const Reports = () => {
                     </td>
 
                     <td className="p-4">
+
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
                           claim.status === "APPROVED"
@@ -436,8 +471,11 @@ const Reports = () => {
                       >
                         {claim.status}
                       </span>
+
                     </td>
+
                   </tr>
+
                 ))}
 
               </tbody>

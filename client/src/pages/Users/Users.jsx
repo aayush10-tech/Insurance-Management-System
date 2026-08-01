@@ -15,15 +15,11 @@ const Users = () => {
   const {
     users,
     loading,
-
     page,
     setPage,
-
     search,
     setSearch,
-
     totalPages,
-
     addUser,
     editUser,
     removeUser,
@@ -56,24 +52,20 @@ const Users = () => {
   };
 
   const handleSubmit = async (data) => {
-    let success = false;
+    const isSuccess = selectedUser
+      ? await editUser(selectedUser.id, data)
+      : await addUser(data);
 
-    if (selectedUser) {
-      success = await editUser(selectedUser.id, data);
-    } else {
-      success = await addUser(data);
-    }
-
-    if (success) {
+    if (isSuccess) {
       setShowUserModal(false);
       setSelectedUser(null);
     }
   };
 
   const handleDeleteConfirm = async (id) => {
-    const success = await removeUser(id);
+    const isSuccess = await removeUser(id);
 
-    if (success) {
+    if (isSuccess) {
       setShowDeleteModal(false);
       setSelectedUser(null);
     }
@@ -81,25 +73,26 @@ const Users = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6">
-
-        <div className="flex items-center justify-between mb-6">
+      <div className="p-8">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-5xl font-bold text-gray-900">
               Users
             </h1>
 
-            <p className="text-gray-500">
-              Manage system users.
+            <p className="mt-2 text-lg text-gray-500">
+              Manage system users and their access permissions.
             </p>
           </div>
         </div>
 
-        <UserSearch
-          search={search}
-          setSearch={setSearch}
-          onAdd={handleAdd}
-        />
+        <div className="mb-8">
+          <UserSearch
+            search={search}
+            setSearch={setSearch}
+            onAdd={handleAdd}
+          />
+        </div>
 
         <UserTable
           users={users}
@@ -109,11 +102,13 @@ const Users = () => {
           onDelete={handleDelete}
         />
 
-        <UserPagination
-          page={page}
-          setPage={setPage}
-          totalPages={totalPages}
-        />
+        <div className="mt-8">
+          <UserPagination
+            page={page}
+            setPage={setPage}
+            totalPages={totalPages}
+          />
+        </div>
 
         <UserModal
           open={showUserModal}
@@ -143,7 +138,6 @@ const Users = () => {
           user={selectedUser}
           onConfirm={handleDeleteConfirm}
         />
-
       </div>
     </DashboardLayout>
   );

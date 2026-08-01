@@ -1,16 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getDashboardStats } from "../services/dashboardService";
 
 const useDashboard = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
-
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     try {
+      setLoading(true);
+
       const response = await getDashboardStats();
 
       if (response.success) {
@@ -21,7 +19,11 @@ const useDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, [fetchDashboard]);
 
   return {
     dashboard,

@@ -124,7 +124,7 @@ const Policies = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+  <div className="max-w-[1450px] mx-auto space-y-6 px-2">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -147,11 +147,13 @@ const Policies = () => {
         </div>
 
         {/* Search */}
-        <PolicySearch
-          search={search}
-          setSearch={setSearch}
-          setPage={setPage}
-        />
+        <div className="max-w-md">
+  <PolicySearch
+    search={search}
+    setSearch={setSearch}
+    setPage={setPage}
+  />
+</div>
 
         {/* Table */}
         {loading ? (
