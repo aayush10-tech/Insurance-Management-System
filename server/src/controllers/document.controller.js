@@ -30,7 +30,7 @@ export const uploadDocument = async (req, res, next) => {
       documentName,
       documentType,
       customerId: Number(customerId),
-      fileName: req.file.filename,
+      fileName: req.file.originalname,
       filePath: `uploads/documents/${req.file.filename}`,
       mimeType: req.file.mimetype,
       fileSize: req.file.size,
@@ -175,8 +175,14 @@ export const downloadDocument = async (req, res, next) => {
 
     const filePath = path.resolve(document.filePath);
 
+    res.setHeader(
+      "Access-Control-Expose-Headers",
+      "Content-Disposition"
+    );
+
     return res.download(filePath, document.fileName);
-  } catch (error) {
+
+    } catch (error) {
     next(error);
   }
 };

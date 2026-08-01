@@ -78,18 +78,33 @@ export const downloadDocument = async (id) => {
     link.href = url;
 
     // Try to get filename from response header
-    const disposition =
-      response.headers["content-disposition"];
+const disposition = response.headers["content-disposition"];
 
-    let fileName = `document-${id}`;
+let fileName = `document-${id}`;
 
-    if (disposition) {
-      const match = disposition.match(/filename="?(.+?)"?$/);
+if (disposition) {
+  const match = disposition.match(/filename="?([^"]+)"?/);
 
-      if (match) {
-        fileName = match[1];
-      }
-    }
+  if (match) {
+    fileName = match[1];
+  }
+} else {
+  const contentType = response.headers["content-type"];
+
+  if (contentType?.includes("application/pdf")) {
+    fileName += ".pdf";
+  } else if (contentType?.includes("image/jpeg")) {
+    fileName += ".jpg";
+  } else if (contentType?.includes("image/png")) {
+    fileName += ".png";
+  } else if (
+    contentType?.includes(
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+  ) {
+    fileName += ".docx";
+  }
+}
 
     link.setAttribute("download", fileName);
 
